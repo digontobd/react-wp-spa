@@ -1,36 +1,46 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+
 const PostCategories = ({ categories }) => {
-  if (!categories) return <>None </>;
+  const [categoryDetails, setCategoryDetails] = useState([]);
 
   useEffect(() => {
-    fectWordpressCategories();
-  }, []);
+    if (categories.length > 0) {
+      fetchCategoryDetails(categories);
+    }
+  }, [categories]);
 
-  const fectWordpressCategories = async () => {
+  const fetchCategoryDetails = async (categoryIds) => {
     try {
-      const apiResponse = await fetch(
-        "http://localhost/adarbepari/wp-json/wp/v2/categories",
-        // "https://adarbepari.com/wp-json/wp/v2/categories",
-        {
+      const categoryPromises = categoryIds.map((id) =>
+        fetch(`http://localhost/adarbepari/wp-json/wp/v2/categories/${id}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
             Authorization: "Basic " + btoa("bepari:@mbitiontough359730"),
           },
-        }
+        }).then((res) => res.json())
       );
-      const listCategories = await apiResponse.json();
-      console.log(listCategories);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
 
-    return (
-      <span className="text-sm font-semibold text-gray-900 dark:text-white">
-        {categories.map((category) => category.name).join(", ")}
-      </span>
-    );
+      const allCategoryDetails = await Promise.all(categoryPromises);
+      setCategoryDetails(allCategoryDetails);
+    } catch (error) {
+      console.error("Error fetching category details:", error);
+    }
   };
+
+  return (
+    <div className="block w-full">
+      <div className="flex flex-wrap">
+        {categoryDetails.map((category) => (
+          <div className="w-1/2 md:w-1/3 lg:w-1/4 p-2" key={category.id}>
+            <div className="bg-gray-200 rounded-lg p-4">
+              <h3 className="text-gray-700 font-semibold">{category.name}</h3>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default PostCategories;
