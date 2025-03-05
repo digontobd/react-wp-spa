@@ -21,8 +21,8 @@ const PostCategories = ({ categories }) => {
         }).then((res) => res.json())
       );
 
-      const allCategoryDetails = await Promise.all(categoryPromises);
-      setCategoryDetails(allCategoryDetails);
+      const getCategoryDetails = await Promise.all(categoryPromises);
+      setCategoryDetails(getCategoryDetails);
     } catch (error) {
       console.error("Error fetching category details:", error);
     }
@@ -32,10 +32,8 @@ const PostCategories = ({ categories }) => {
     <div className="block w-full">
       <div className="flex flex-wrap">
         {categoryDetails.map((category) => (
-          <div className="w-1/2 md:w-1/3 lg:w-1/4 p-2" key={category.id}>
-            <div className="bg-gray-200 rounded-lg p-4">
-              <h3 className="text-gray-700 font-semibold">{category.name}</h3>
-            </div>
+          <div className="p-2" key={category.id}>
+            <div className="bg-gray-200 rounded-lg p-4">{category.name}</div>
           </div>
         ))}
       </div>

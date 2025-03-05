@@ -3,6 +3,7 @@ import AppPostModal from "./Modal/AddPostModal";
 import EditPostModal from "./Modal/EditPostModal";
 import PostStatus from "./Helper/PostStatus";
 import PostCategories from "./Helper/PostCategories";
+import FeaturedImage from "./Helper/FeaturedImage";
 const PostList = () => {
   const [AddPostModalFlag, setAddPostModalFlag] = useState(false);
   const [EditPostModalFlag, setEditPostModalFlag] = useState(false);
@@ -25,7 +26,7 @@ const PostList = () => {
       );
       const listPosts = await apiResponse.json();
       setPosts(listPosts);
-      console.log(listPosts);
+      // console.log(listPosts);
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
@@ -88,11 +89,7 @@ const PostList = () => {
                         <PostCategories categories={post.categories} />
                       </td>
                       <td className="px-4 py-2">
-                        <img
-                          className="w-50 rounded-lg"
-                          src={post.featured_image_thumbnail_url}
-                          alt={post.title.rendered}
-                        />
+                        <FeaturedImage featuredMedia={post.featured_media} />
                       </td>
                       <td className="px-4 py-2">
                         <button
