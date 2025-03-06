@@ -1,4 +1,5 @@
 import { useState } from "react";
+import useCategories from "../Helper/Categories";
 const AppPostModal = ({ handleCloseEvent }) => {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
@@ -6,18 +7,51 @@ const AppPostModal = ({ handleCloseEvent }) => {
   const [featuredImage, setFeaturedImage] = useState(null);
   const [status, setStatus] = useState("");
 
+  const categories = useCategories(); // call custom hook
+
+  console.log(categories);
+
   // Handle form submission
-  const handleFormSubmitData = (e) => {
+  const handleFormSubmitData = async (e) => {
     e.preventDefault();
+
+    let featuredImageID = null;
+    // Upload the featured image if provided and get the media ID
+    if (featuredImage) {
+      featuredImageID = await handleFeaturedImageUpload(featuredImage);
+    }
 
     const postData = {
       title,
       content,
       categories: [category],
-      featured_media: featuredImage,
+      featured_media: featuredImageID,
       status,
     };
     console.log(postData);
+  };
+
+  const handleFeaturedImageUpload = async (featuredImageFile) => {
+    try {
+      const formData = new FormData();
+      formData.append("file", featuredImageFile);
+      formData.append("alt_text", featuredImageFile.name);
+
+      const apiResponse = await fetch(
+        "http://localhost/adarbepari/wp-json/wp/v2/media",
+        {
+          method: "POST",
+          headers: {
+            Authorization: "Basic " + btoa("bepari:@mbitiontough359730"),
+          },
+          body: formData,
+        }
+      );
+      const apiData = await apiResponse.json();
+      return apiData.id;
+    } catch (error) {
+      console.error("Error uploading featured image:", error);
+    }
   };
 
   return (
@@ -52,9 +86,12 @@ const AppPostModal = ({ handleCloseEvent }) => {
                     className="border border-gray-300 rounded w-full p-2"
                     required
                   >
-                    <option value="">Select Category</option>
-                    <option value="1">Category 1</option>
-                    <option value="2">Category 2</option>
+                    <option value="">Select a category</option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
 

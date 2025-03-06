@@ -28,7 +28,7 @@ const FeaturedImage = ({ featuredMedia }) => {
 
       const imageApiData = await imageApiResponse.json();
       setimageDetails(imageApiData);
-      console.log(imageApiData);
+      // console.log(imageApiData);
     } catch (error) {
       console.error("Error fetching category details:", error);
     }
