@@ -4,11 +4,12 @@ import EditPostModal from "./Modal/EditPostModal";
 import PostStatus from "./Helper/PostStatus";
 import PostCategories from "./Helper/PostCategories";
 import FeaturedImage from "./Helper/FeaturedImage";
+import Loader from "./Helper/Loader";
 const PostList = () => {
   const [AddPostModalFlag, setAddPostModalFlag] = useState(false);
   const [EditPostModalFlag, setEditPostModalFlag] = useState(false);
-
   const [listPosts, setPosts] = useState([]);
+  const [displayLoader, setDisplayLoader] = useState(true);
 
   // list of posts
   const fectWordpressPosts = async () => {
@@ -29,6 +30,8 @@ const PostList = () => {
       // console.log(listPosts);
     } catch (error) {
       console.error("Error fetching posts:", error);
+    } finally {
+      setDisplayLoader(false);
     }
   };
 
@@ -47,12 +50,12 @@ const PostList = () => {
   return (
     <>
       <div className="container mx-auto p-4">
-        <div className="loader"></div>
+        {displayLoader && <Loader />}
 
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold">Posts</h1>
           <button
-            className="bg-blue-500 text-white px-4 py-2 rounded"
+            className="bg-blue-500 hover:bg-blue-600 hover:shadow-md hover:cursor-pointer text-white px-4 py-2 rounded"
             onClick={toggleAddPostModal}
           >
             Add Post
@@ -62,12 +65,12 @@ const PostList = () => {
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-200 dark:bg-gray-700 dark:text-gray-400">
             <tr>
-              <th className="px-6 py-3">ID</th>
+              <th className="px-6 py-3 text-center">ID</th>
               <th className="px-6 py-3">Title</th>
-              <th className="px-6 py-3">Status</th>
-              <th className="px-6 py-3">Category</th>
-              <th className="px-6 py-3">Featured Image</th>
-              <th className="px-6 py-3">Actions</th>
+              <th className="px-6 py-3 text-center">Status</th>
+              <th className="px-6 py-3 text-center">Category</th>
+              <th className="px-6 py-3 text-center">Featured Image</th>
+              <th className="px-6 py-3 text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -81,11 +84,13 @@ const PostList = () => {
                       key={post.id}
                     >
                       <td className="px-4 py-2">{post.id}</td>
-                      <td className="px-4 py-2">{post.title.rendered}</td>
+                      <td className="px-4 py-2 text-left">
+                        {post.title.rendered}
+                      </td>
                       <td className="px-4 py-2">
                         <PostStatus status={post.status} />
                       </td>
-                      <td className="px-4 py-2">
+                      <td className="px-4 py-2 text-center">
                         <PostCategories categories={post.categories} />
                       </td>
                       <td className="px-4 py-2">
@@ -110,7 +115,10 @@ const PostList = () => {
         </table>
 
         {AddPostModalFlag && (
-          <AppPostModal handleCloseEvent={toggleAddPostModal} />
+          <AppPostModal
+            handleCloseEvent={toggleAddPostModal}
+            refreshPostList={fectWordpressPosts}
+          />
         )}
 
         {EditPostModalFlag && (

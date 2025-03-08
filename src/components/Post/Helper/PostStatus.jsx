@@ -10,7 +10,7 @@ const PostStatus = ({ status }) => {
       type="button"
       className={`text-white ${
         statusStyles[status] || "bg-gray-500 hover:bg-gray-600"
-      } hover:cursor-pointer font-medium rounded-sm text-sm px-5 py-2.5 text-center me-2 mb-2 capitalize`}
+      } font-medium rounded-sm text-sm px-5 py-2.5 text-center me-2 mb-2 capitalize`}
     >
       {status}
     </button>

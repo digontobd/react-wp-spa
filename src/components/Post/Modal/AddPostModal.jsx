@@ -1,19 +1,22 @@
 import { useState } from "react";
 import useCategories from "../Helper/Categories";
-const AppPostModal = ({ handleCloseEvent }) => {
+import Loader from "../Helper/Loader";
+const AppPostModal = ({ handleCloseEvent, refreshPostList }) => {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [content, setContent] = useState("");
   const [featuredImage, setFeaturedImage] = useState(null);
   const [status, setStatus] = useState("");
 
-  const categories = useCategories(); // call custom hook
+  const [displayLoader, setDisplayLoader] = useState(false);
 
-  console.log(categories);
+  const categories = useCategories(); // call custom hook
 
   // Handle form submission
   const handleFormSubmitData = async (e) => {
     e.preventDefault();
+
+    setDisplayLoader(true);
 
     let featuredImageID = null;
     // Upload the featured image if provided and get the media ID
@@ -29,6 +32,33 @@ const AppPostModal = ({ handleCloseEvent }) => {
       status,
     };
     console.log(postData);
+
+    try {
+      const apiResponse = await fetch(
+        "http://localhost/adarbepari/wp-json/wp/v2/posts",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Basic " + btoa("bepari:@mbitiontough359730"),
+          },
+          body: JSON.stringify(postData),
+        }
+      );
+
+      if (!apiResponse.ok) {
+        throw new Error("Failed to add post");
+      }
+
+      const apiData = await apiResponse.json();
+      console.log(apiData);
+      handleCloseEvent();
+      refreshPostList();
+    } catch (error) {
+      console.error("Error adding post:", error);
+    } finally {
+      setDisplayLoader(false);
+    }
   };
 
   const handleFeaturedImageUpload = async (featuredImageFile) => {
@@ -48,6 +78,7 @@ const AppPostModal = ({ handleCloseEvent }) => {
         }
       );
       const apiData = await apiResponse.json();
+      console.log(apiData);
       return apiData.id;
     } catch (error) {
       console.error("Error uploading featured image:", error);
@@ -59,7 +90,7 @@ const AppPostModal = ({ handleCloseEvent }) => {
       <div className="modal" id="addPostModal">
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800/[.60]">
           <div className="bg-white p-6 rounded-lg shadow-lg w-1/2 relative">
-            <div className="loader"></div>
+            {displayLoader && <Loader />}
             <h2 className="text-2xl mb-4">Add New Post</h2>
             <form onSubmit={handleFormSubmitData}>
               <div className="grid grid-cols-2 gap-4">
@@ -138,14 +169,14 @@ const AppPostModal = ({ handleCloseEvent }) => {
               <div className="flex justify-end mt-4">
                 <button
                   type="button"
-                  className="bg-gray-500 text-white px-4 py-2 rounded mr-2"
+                  className="bg-gray-500 hover:bg-gray-600 hover:cursor-pointer text-white px-4 py-2 rounded mr-2"
                   onClick={handleCloseEvent}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-blue-500 text-white px-4 py-2 rounded"
+                  className="bg-blue-500 hover:bg-blue-600 hover:cursor-pointer text-white px-4 py-2 rounded"
                 >
                   Submit
                 </button>
