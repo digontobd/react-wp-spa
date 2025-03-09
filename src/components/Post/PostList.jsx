@@ -48,6 +48,30 @@ const PostList = () => {
     setEditPostId(postId);
   };
 
+  const handleDeletePost = async (postId) => {
+    setDisplayLoader(true);
+    try {
+      if (window.confirm("Are you sure you want to delete this post?")) {
+        const apiResponse = await fetch(
+          `http://localhost/adarbepari/wp-json/wp/v2/posts/${postId}?force=true`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Basic " + btoa("bepari:@mbitiontough359730"),
+            },
+          }
+        );
+        console.log(apiResponse);
+        fectWordpressPosts();
+      }
+    } catch (error) {
+      console.error("Error deleting post: ", error);
+    } finally {
+      setDisplayLoader(false);
+    }
+  };
+
   return (
     <>
       <div className="container mx-auto p-4">
@@ -104,7 +128,10 @@ const PostList = () => {
                         >
                           Edit
                         </button>
-                        <button className="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 hover:cursor-pointer font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+                        <button
+                          className="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 hover:cursor-pointer font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                          onClick={() => handleDeletePost(post.id)}
+                        >
                           Delete
                         </button>
                       </td>
