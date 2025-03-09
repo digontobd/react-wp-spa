@@ -10,13 +10,13 @@ const PostList = () => {
   const [EditPostModalFlag, setEditPostModalFlag] = useState(false);
   const [listPosts, setPosts] = useState([]);
   const [displayLoader, setDisplayLoader] = useState(true);
+  const [editPostId, setEditPostId] = useState(null);
 
   // list of posts
   const fectWordpressPosts = async () => {
     try {
       const apiResponse = await fetch(
         "http://localhost/adarbepari/wp-json/wp/v2/posts?status=publish,draft,trash",
-        // "https://adarbepari.com/wp-json/wp/v2/posts",
         {
           method: "GET",
           headers: {
@@ -43,8 +43,9 @@ const PostList = () => {
     setAddPostModalFlag(!AddPostModalFlag);
   };
 
-  const toggleEditPostModal = () => {
+  const toggleEditPostModal = (postId) => {
     setEditPostModalFlag(!EditPostModalFlag);
+    setEditPostId(postId);
   };
 
   return (
@@ -98,12 +99,12 @@ const PostList = () => {
                       </td>
                       <td className="px-4 py-2">
                         <button
-                          className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-                          onClick={toggleEditPostModal}
+                          className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 hover:cursor-pointer font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                          onClick={() => toggleEditPostModal(post.id)}
                         >
                           Edit
                         </button>
-                        <button className="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+                        <button className="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 hover:cursor-pointer font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
                           Delete
                         </button>
                       </td>
@@ -122,7 +123,11 @@ const PostList = () => {
         )}
 
         {EditPostModalFlag && (
-          <EditPostModal handleCloseEvent={toggleEditPostModal} />
+          <EditPostModal
+            handleCloseEvent={toggleEditPostModal}
+            refreshPostList={fectWordpressPosts}
+            postId={editPostId}
+          />
         )}
       </div>
     </>
