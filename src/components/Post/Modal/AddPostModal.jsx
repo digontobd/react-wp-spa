@@ -1,5 +1,5 @@
 import { useState } from "react";
-import useCategories from "../Helper/Categories";
+import useCategories from "../../../hooks/Categories";
 import Loader from "../Helper/Loader";
 const AppPostModal = ({ handleCloseEvent, refreshPostList }) => {
   const [title, setTitle] = useState("");
@@ -7,6 +7,7 @@ const AppPostModal = ({ handleCloseEvent, refreshPostList }) => {
   const [content, setContent] = useState("");
   const [featuredImage, setFeaturedImage] = useState(null);
   const [status, setStatus] = useState("");
+  const [tags, setTags] = useState("");
 
   const [displayLoader, setDisplayLoader] = useState(false);
 
@@ -163,6 +164,17 @@ const AppPostModal = ({ handleCloseEvent, refreshPostList }) => {
                     <option value="publish">Publish</option>
                     <option value="draft">Draft</option>
                   </select>
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-sm font-medium mb-2">Tags</label>
+                  <input
+                    type="text"
+                    className="border border-gray-300 rounded w-full p-2"
+                    value={tags}
+                    onChange={(e) => setTags(e.target.value)}
+                    required
+                  />
                 </div>
               </div>
 

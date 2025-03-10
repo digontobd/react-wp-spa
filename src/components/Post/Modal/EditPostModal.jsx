@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import useCategories from "../Helper/Categories";
+import useCategories from "../../../hooks/Categories";
 import Loader from "../Helper/Loader";
 const EditPostModal = (props) => {
   const [title, setTitle] = useState("");
